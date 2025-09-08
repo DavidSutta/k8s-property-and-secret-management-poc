@@ -207,8 +207,8 @@ if __name__ == '__main__':
 
     print("=" * 50)
     print("Available endpoints:")
-    print("  GET /secrets    - Serve data from secrets (YAML or ConfigMap)")
-    print("  GET /configs    - Serve data from configs (YAML or ConfigMap)")
+    print("  GET /secrets    - Serve data from secrets")
+    print("  GET /configs    - Serve data from configs")
     print("  GET /health     - Health check")
     print("  GET /env-status - Show environment variable status")
     print("=" * 50)
