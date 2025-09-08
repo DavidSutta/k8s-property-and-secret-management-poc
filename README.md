@@ -88,3 +88,6 @@ vault-local/vault-helper.sh start
 # TODO: Expand readme with VSO usage
 
 https://developer.hashicorp.com/vault/docs/platform/k8s/vso/api-reference#vaultauthconfigapprole
+
+https://developer.hashicorp.com/vault/tutorials/kubernetes-introduction/vault-secrets-operator
+
