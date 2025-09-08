@@ -30,11 +30,27 @@ def load_yaml_file(filename):
         print(f"Error loading {filename}: {e}")
         return None
 
+def is_kubernetes_environment():
+    """Check if running in Kubernetes environment"""
+    # Check for Kubernetes-specific environment variables or files
+    return (
+        os.environ.get('KUBERNETES_SERVICE_HOST') is not None or
+        os.path.exists('/var/run/secrets/kubernetes.io/serviceaccount') or
+        os.environ.get('CONFIGS_DATA') is not None or
+        os.environ.get('SECRETS_DATA') is not None
+    )
+
 def preprocess_yaml_files():
     """Pre-process YAML files at application startup and store as environment variables"""
     global SECRETS_DATA, CONFIGS_DATA
 
-    print("Pre-processing YAML files at startup...")
+    # Only load YAML files in local development, not in Kubernetes
+    if is_kubernetes_environment():
+        print("🔧 Running in Kubernetes environment - skipping YAML file loading")
+        print("📦 Using environment variables from ConfigMaps/Secrets")
+        return
+
+    print("🏠 Running in local development mode - loading YAML files...")
 
     # Load secrets.yml
     secrets_data = load_yaml_file('secrets.yml')
@@ -94,30 +110,42 @@ def get_configs_data():
 
 @app.route('/secrets', methods=['GET'])
 def get_secrets():
-    """GET endpoint to serve data from pre-processed secrets data"""
+    """GET endpoint to serve data from secrets (YAML file or ConfigMap)"""
     secrets_data = get_secrets_data()
 
     if secrets_data is None:
-        abort(404, description="secrets data not available (file not found or could not be loaded at startup)")
+        abort(404, description="secrets data not available (file not found or environment variable not set)")
+
+    # Determine data source for response
+    if is_kubernetes_environment():
+        source = "Kubernetes ConfigMap (environment variable)"
+    else:
+        source = "secrets.yml (local development)"
 
     return jsonify({
         "status": "success",
         "data": secrets_data,
-        "source": "secrets.yml (pre-processed at startup)"
+        "source": source
     })
 
 @app.route('/configs', methods=['GET'])
 def get_configs():
-    """GET endpoint to serve data from pre-processed configs data"""
+    """GET endpoint to serve data from configs (YAML file or ConfigMap)"""
     configs_data = get_configs_data()
 
     if configs_data is None:
-        abort(404, description="configs data not available (file not found or could not be loaded at startup)")
+        abort(404, description="configs data not available (file not found or environment variable not set)")
+
+    # Determine data source for response
+    if is_kubernetes_environment():
+        source = "Kubernetes ConfigMap (environment variable)"
+    else:
+        source = "configs.yml (local development)"
 
     return jsonify({
         "status": "success",
         "data": configs_data,
-        "source": "configs.yml (pre-processed at startup)"
+        "source": source
     })
 
 @app.route('/health', methods=['GET'])
@@ -166,13 +194,21 @@ if __name__ == '__main__':
     print("Starting K8s Property and Secret Management POC...")
     print("=" * 50)
 
-    # Pre-process YAML files at startup
+    # Detect environment and pre-process accordingly
+    if is_kubernetes_environment():
+        print("🔧 Kubernetes environment detected")
+        print("📦 Configuration will be loaded from environment variables")
+    else:
+        print("🏠 Local development environment detected")
+        print("📁 Configuration will be loaded from YAML files")
+
+    # Pre-process YAML files at startup (only in local dev)
     preprocess_yaml_files()
 
     print("=" * 50)
     print("Available endpoints:")
-    print("  GET /secrets    - Serve data from secrets.yml (pre-processed)")
-    print("  GET /configs    - Serve data from configs.yml (pre-processed)")
+    print("  GET /secrets    - Serve data from secrets (YAML or ConfigMap)")
+    print("  GET /configs    - Serve data from configs (YAML or ConfigMap)")
     print("  GET /health     - Health check")
     print("  GET /env-status - Show environment variable status")
     print("=" * 50)
