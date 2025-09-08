@@ -62,8 +62,8 @@ Starting K8s Property and Secret Management POC...
 📦 Using environment variables from ConfigMaps/Secrets
 ==================================================
 Available endpoints:
-  GET /secrets    - Serve data from secrets (YAML or ConfigMap)
-  GET /configs    - Serve data from configs (YAML or ConfigMap)
+  GET /secrets    - Serve data from secrets
+  GET /configs    - Serve data from configs
   GET /health     - Health check
   GET /env-status - Show environment variable status
 ==================================================
