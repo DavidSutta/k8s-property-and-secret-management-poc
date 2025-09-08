@@ -1,0 +1,17 @@
+# K8s Property and Secret Management POC Dependencies
+
+# Web framework
+Flask==3.0.0
+
+# YAML parsing
+PyYAML==6.0.1
+
+# Additional useful packages for production
+gunicorn==21.2.0
+python-dotenv==1.0.0
+
+# Optional: For enhanced logging and monitoring
+structlog==23.2.0
+
+# Testing
+requests==2.31.0
