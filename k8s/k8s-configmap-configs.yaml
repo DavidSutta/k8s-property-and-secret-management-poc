@@ -1,0 +1,80 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: configs-config
+  namespace: k8s-property-secret-poc
+  labels:
+    app: k8s-property-secret-poc
+data:
+  configs-data: |
+    {
+      "application": {
+        "name": "K8s Property and Secret Management POC",
+        "version": "1.0.0",
+        "environment": "development",
+        "debug": true,
+        "log_level": "INFO"
+      },
+      "server": {
+        "host": "0.0.0.0",
+        "port": 5000,
+        "workers": 4,
+        "timeout": 30
+      },
+      "database": {
+        "host": "postgres.internal.cluster.local",
+        "port": 5432,
+        "name": "app_database",
+        "pool_size": 10,
+        "max_overflow": 20,
+        "echo": false
+      },
+      "redis": {
+        "host": "redis.internal.cluster.local",
+        "port": 6379,
+        "db": 0,
+        "max_connections": 20,
+        "socket_timeout": 5
+      },
+      "logging": {
+        "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        "file": "/var/log/app.log",
+        "max_size": "10MB",
+        "backup_count": 5
+      },
+      "features": {
+        "enable_metrics": true,
+        "enable_tracing": true,
+        "enable_caching": true,
+        "cache_ttl": 3600
+      },
+      "environments": {
+        "production": {
+          "debug": false,
+          "log_level": "WARNING",
+          "workers": 8,
+          "database": {
+            "pool_size": 20,
+            "max_overflow": 50
+          }
+        },
+        "staging": {
+          "debug": false,
+          "log_level": "INFO",
+          "workers": 4,
+          "database": {
+            "pool_size": 10,
+            "max_overflow": 20
+          }
+        },
+        "development": {
+          "debug": true,
+          "log_level": "DEBUG",
+          "workers": 1,
+          "database": {
+            "pool_size": 5,
+            "max_overflow": 10
+          }
+        }
+      }
+    }

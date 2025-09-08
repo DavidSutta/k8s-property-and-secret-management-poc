@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-property-secret-poc
+  namespace: k8s-property-secret-poc
+  labels:
+    app: k8s-property-secret-poc
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: k8s-property-secret-poc
+  template:
+    metadata:
+      labels:
+        app: k8s-property-secret-poc
+    spec:
+      containers:
+      - name: flask-app
+        image: k8s-property-secret-poc:latest
+        imagePullPolicy: Never  # Use local image for minikube
+        ports:
+        - containerPort: 5000
+        env:
+        - name: SECRETS_DATA
+          valueFrom:
+            configMapKeyRef:
+              name: secrets-config
+              key: secrets-data
+        - name: CONFIGS_DATA
+          valueFrom:
+            configMapKeyRef:
+              name: configs-config
+              key: configs-data
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 5

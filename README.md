@@ -104,13 +104,22 @@ Serves data from `configs.yml` file.
 ## File Structure
 
 ```
-├── app.py                 # Main Flask application
-├── secrets.yml           # Sample secrets configuration
-├── configs.yml           # Sample application configuration
-├── requirements.txt      # Python dependencies
-├── test_endpoints.py     # Test script for endpoints
-├── README.md            # This file
-└── venv/                # Virtual environment (created after setup)
+├── app.py                           # Main Flask application
+├── secrets.yml                      # Sample secrets configuration
+├── configs.yml                      # Sample application configuration
+├── requirements.txt                 # Python dependencies
+├── test_endpoints.py                # Test script for endpoints
+├── Dockerfile                       # Docker container configuration
+├── k8s-namespace.yaml              # Kubernetes namespace
+├── k8s-deployment.yaml             # Kubernetes deployment
+├── k8s-service.yaml                # Kubernetes service
+├── k8s-configmap-secrets.yaml      # ConfigMap for secrets data
+├── k8s-configmap-configs.yaml      # ConfigMap for configs data
+├── deploy-minikube.sh              # Minikube deployment script
+├── cleanup-minikube.sh             # Minikube cleanup script
+├── MINIKUBE_DEPLOYMENT.md          # Minikube deployment guide
+├── README.md                       # This file
+└── venv/                           # Virtual environment (created after setup)
 ```
 
 ## Configuration Files
@@ -120,6 +129,41 @@ Contains sensitive data like passwords, API keys, and encryption keys. This file
 
 ### configs.yml
 Contains non-sensitive configuration data like server settings, database connection parameters, and feature flags.
+
+## Kubernetes Deployment (Minikube)
+
+The application can be deployed to minikube for local Kubernetes testing:
+
+### Quick Deploy to Minikube
+
+1. **Start minikube**:
+   ```bash
+   minikube start
+   ```
+
+2. **Deploy the application**:
+   ```bash
+   ./deploy-minikube.sh
+   ```
+
+3. **Access the application**:
+   The script will output the application URL (e.g., `http://192.168.49.2:30080`)
+
+4. **Clean up**:
+   ```bash
+   ./cleanup-minikube.sh
+   ```
+
+For detailed minikube deployment instructions, see [MINIKUBE_DEPLOYMENT.md](MINIKUBE_DEPLOYMENT.md).
+
+### Kubernetes Resources
+
+The deployment includes:
+- **Dockerfile** - Containerizes the Flask application
+- **k8s-deployment.yaml** - Kubernetes Deployment with 2 replicas
+- **k8s-service.yaml** - NodePort service exposing port 30080
+- **k8s-configmap-*.yaml** - ConfigMaps for configuration data
+- **k8s-namespace.yaml** - Dedicated namespace for the application
 
 ## Production Deployment
 
