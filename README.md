@@ -75,3 +75,16 @@ WARNING: This is a development server. Do not use it in a production deployment.
  * Running on http://10.244.0.3:5000
 Press CTRL+C to quit
 ```
+
+## Adding Vault
+
+Idea is to have a locally running vault, then reference that from your `minikube` deployment via `http://host.minikube.internal:8200`.
+To run vault, use
+
+```bash
+vault-local/vault-helper.sh start
+```
+
+# TODO: Expand readme with VSO usage
+
+https://developer.hashicorp.com/vault/docs/platform/k8s/vso/api-reference#vaultauthconfigapprole
